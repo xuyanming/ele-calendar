@@ -41,7 +41,6 @@
 
   export default {
     mixins: [Locale],
-
     props: {
       firstDayOfWeek: {
         default: 7,
@@ -70,6 +69,8 @@
       },
       date: {},
 
+      value: {},
+
       selectionMode: {
         default: 'day'
       },
@@ -83,7 +84,13 @@
         type: Boolean,
         default: false
       },
-
+      
+      selectedDate: {
+        type: Array,
+      },
+      selectDom:{
+        type: Array,
+      },
       disabledDate: {},
 
       minDate: {},
@@ -184,6 +191,7 @@
 
         const startDate = this.startDate;
         const disabledDate = this.disabledDate;
+        const selectedDate = this.selectedDate || this.value;
         const now = clearHours(new Date());
 
         for (let i = 0; i < 6; i++) {
@@ -260,7 +268,8 @@
                     }
                 }
             }
-            
+            let newDate = new Date(time);
+            cell.selected = Array.isArray(selectedDate) &&  selectedDate.filter(date => date.toString() === newDate.toString())[0];
             this.$set(row, this.showWeekNumber ? j + 1 : j, cell);
           }
 
@@ -372,6 +381,10 @@
 
         if (cell.disabled) {
           classes.push('disabled');
+        }
+
+        if (cell.selected) {
+          classes.push('selected');
         }
 
         return classes.join(' ');
@@ -515,7 +528,7 @@
         }
         newDate.setDate(parseInt(text, 10));
 
-        if (this.selectionMode === 'range') {
+        if (selectionMode === 'range') {
           if (this.minDate && this.maxDate) {
             const minDate = new Date(newDate.getTime());
             const maxDate = null;
@@ -561,6 +574,21 @@
             value: value,
             date: newDate
           });
+        } else if (selectionMode === 'dates') {
+          let selectedDate = this.selectedDate;
+          let selectDom = this.selectDom;
+          if (!cell.selected) {
+            selectedDate.push(newDate);
+            selectDom.push(cell);
+          } else {
+            selectedDate.forEach((date, index) => {
+              if (date.toString() === newDate.toString()) {
+                selectedDate.splice(index, 1);
+                selectDom.splice(index, 1);
+              }
+            });
+          }
+          this.$emit('select', selectedDate,selectDom);
         }
       }
     }

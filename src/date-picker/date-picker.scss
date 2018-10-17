@@ -95,26 +95,18 @@
     margin-left: 10px;
   }
 }
-.el-table--border-calendar{
-    border-left: 1px solid #ebeef5;
-    border-top: 1px solid #ebeef5;
+@include b(table--border-calendar) {
+  border-left: 1px solid #ebeef5;
+  border-top: 1px solid #ebeef5;
 }
-// .el-table--border-calendar{
-    
-// }
-.el-table-calendar {
-    position: relative;
-    overflow: hidden;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    width: 100%;
-    max-width: 100%;
-    font-size: 14px;
-    color: #606266;
-}
-.el-table-calendar{
-    background-color: #fff;
+@include b(table-calendar) {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  font-size: 14px;
+  color: #606266;
+  background-color: #fff;
 }

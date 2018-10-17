@@ -7,8 +7,6 @@
   background: $--color-white;
   border-radius: $--border-radius-base;
   line-height: 30px;
-  margin: 5px 0;
-
   @include e((body, body-wrapper)) {
     &::after {
       content: "";

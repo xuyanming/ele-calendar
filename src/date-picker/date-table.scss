@@ -34,8 +34,6 @@
   }
 
   td {
-    width: 32px;
-    height: 30px;
     box-sizing: border-box;
     text-align: center;
     cursor: pointer;
@@ -119,10 +117,10 @@
     }
 
     &.selected div {
-      margin-left: 5px;
-      margin-right: 5px;
+      // margin-left: 5px;
+      // margin-right: 5px;
       background-color: $--datepicker-inrange-color;
-      border-radius: 15px;
+      // border-radius: 15px;
       &:hover {
         background-color: $--datepicker-inrange-hover-color;
       }
@@ -148,31 +146,28 @@
   }
     
 }
-.el-table--border-calendar th{
-    border-bottom: 1px solid #ebeef5;
-}
-.el-table--border-calendar td, .el-table--border-calendar th {
+@include b(table--border-calendar) {
+  td,th{
     border-right: 1px solid #ebeef5;
     border-bottom: 1px solid #ebeef5;
+  }
+
 }
-.el-table-calendar th {
+@include b(table-calendar) {
+  th{
     white-space: nowrap;
     overflow: hidden;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     text-align: center;
-}
-.el-table-calendar td, .el-table-calendar th {
-    // padding: 12px 0;
+  }
+  td,th{
     min-width: 0;
-    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     text-overflow: ellipsis;
     vertical-align: middle;
     position: relative;
-}
-.el-table-calendar th, .el-table-calendar tr {
+  }
+  th,tr{
     background-color: #fff;
+  }
 }

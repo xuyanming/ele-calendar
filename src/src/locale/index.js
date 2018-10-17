@@ -39,6 +39,7 @@ export const t = function(path, options) {
 
 export const use = function(l) {
   lang = l || lang;
+  console.log(lang)
 };
 
 export const i18n = function(fn) {

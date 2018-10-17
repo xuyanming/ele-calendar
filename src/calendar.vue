@@ -7,6 +7,7 @@
       }, popperClass]">
       <div class="el-picker-panel-calendar__body-wrapper">
         <div class="el-picker-panel-calendar__body">
+          <slot name="after"></slot>
           <div
             class="el-date-picker-calendar__header"
             :class="{ 'el-date-picker-calendar__header--bordered': currentView === 'year' || currentView === 'month' }"
@@ -14,39 +15,37 @@
             <i
             @click="prevYear"
             :aria-label="t(`el.datepicker.prevYear`)"
-            type="button" class="el-picker-panel-calendar__icon-btn el-date-picker-calendar__prev-btn iconfont icon-shuangzuojiantou-">
+            class="el-picker-panel-calendar__icon-btn el-date-picker-calendar__prev-btn iconfont icon-shuangzuojiantou-">
             </i>
             <i
-              type="button"
               @click="prevMonth"
               v-show="currentView === 'date'"
               :aria-label="t(`el.datepicker.prevMonth`)"
               class="el-picker-panel-calendar__icon-btn el-date-picker-calendar__prev-btn iconfont icon-icon_arrow_left">
             </i>
-            <span
-              @click="showYearPicker"
+            <slot :todo="{'yearLabel':yearLabel,'month':t(`el.datepicker.month${ month + 1 }`)}">
+              <span
               role="button"
               class="el-date-picker-calendar__header-label">{{ yearLabel }}</span>
-            <span
-              @click="showMonthPicker"
-              v-show="currentView === 'date'"
-              role="button"
-              class="el-date-picker-calendar__header-label"
-              :class="{ active: currentView === 'month' }">{{t(`el.datepicker.month${ month + 1 }`)}}</span>
+              <span
+                v-show="currentView === 'date'"
+                role="button"
+                class="el-date-picker-calendar__header-label"
+                :class="{ active: currentView === 'month' }">{{t(`el.datepicker.month${ month + 1 }`)}}</span>
+            </slot>
             <i
-              type="button"
               @click="nextYear"
               :aria-label="t(`el.datepicker.nextYear`)"
               class="el-picker-panel-calendar__icon-btn el-date-picker-calendar__next-btn iconfont icon-shuangyoujiantou- ">
             </i>
             <i
-              type="button"
               @click="nextMonth"
               v-show="currentView === 'date'"
               :aria-label="t(`el.datepicker.nextMonth`)"
               class="el-picker-panel-calendar__icon-btn el-date-picker-calendar__next-btn iconfont icon-icon_arrow_right">
             </i>
           </div>
+          <slot name="before"></slot>
           <div :class="[{'el-table--border-calendar':border,'el-table-calendar':border,}]" >
             <date-table
               @pick="handleDatePick"
@@ -61,7 +60,10 @@
               :prop="prop"
               :currentmonth="currentmonth"
               :render-content="renderContent"
-              :disabled-date="disabledDate">
+              @select="handleDateSelect"
+              :disabled-date="disabledDate"
+              :selected-date="selectedDate"
+              :select-dom="selectDom">
             </date-table>
           </div>
         </div>
@@ -89,9 +91,22 @@
     extractTimeFormat
   } from './util';
   import Clickoutside from './src/utils/clickoutside';
-
+  import enLocale from './src/locale/lang/en';
   import Locale from './src/mixins/locale';
+  import { use } from './src/locale';
   import DateTable from './date-table.vue';
+  const localize = lang => {
+    switch (lang) {
+      case 'zh-CN':
+        use();
+        break;
+      case 'en':
+        use(enLocale);
+        break;
+      default:
+        use(enLocale);
+    }
+  };
   export default {
     mixins: [Locale],
 
@@ -110,6 +125,7 @@
       },
 
       value(val) {
+        if (this.selectionMode === 'dates' && this.value) return;
         if (isDate(val)) {
           this.date = new Date(val);
         } else {
@@ -137,6 +153,7 @@
       }
     },
     created() {
+        localize(this.lang)
         if (isDate(this.defaultValue) && !isDate(this.value)) {
           this.date = this.defaultValue ? new Date(this.defaultValue) : new Date();
         }
@@ -174,13 +191,13 @@
       //   this.date = new Date(this.date);
       // },
 
-      showMonthPicker() {
-        // this.currentView = 'month';
-      },
+      // showMonthPicker() {
+      //   this.currentView = 'month';
+      // },
 
-      showYearPicker() {
-        // this.currentView = 'year';
-      },
+      // showYearPicker() {
+      //   this.currentView = 'year';
+      // },
 
       // XXX: 没用到
       // handleLabelClick() {
@@ -226,6 +243,12 @@
         }
       },
 
+      handleDateSelect(value,selectDom) {
+        if (this.selectionMode === 'dates') {
+          this.selectedDate = value;
+          this.$emit('select', value,selectDom);
+        }
+      },
     //   handleTimePick(value, visible, first) {
     //     if (isDate(value)) {
     //       const newDate = this.value ? modifyTime(this.date, value.getHours(), value.getMinutes(), value.getSeconds()) : modifyWithDefaultTime(value, this.defaultTime);
@@ -401,6 +424,9 @@
         type: Boolean,
         default: false
       },
+      lang:{
+        default: 'zh-CN'
+      },
       prop:{
         default: 'date'
       },
@@ -413,11 +439,26 @@
         type: Boolean,
         default: false  
       },
+      selectionMode: {
+          default: 'day'
+      },
       lunarcalendar:{
         type: Boolean,
         default: false  
       },
-      defaultValue:null
+      defaultValue:null,
+      selectedDate: {
+        type: Array,
+        default: function () {
+            return []
+        }
+      },
+      selectDom: {
+        type: Array,
+        default: function () {
+            return []
+        }
+      },
     },
     data() {
       return {
@@ -427,11 +468,12 @@
         // defaultValue: null,
         defaultTime: null,
         showTime: false,
-        selectionMode: 'day',
+        
         shortcuts: '',
         visible: false,
         currentView: 'date',
         // disabledDate: '',
+        // selectedDate: [],
         firstDayOfWeek: 7,
         showWeekNumber: false,
         timePickerVisible: false,

@@ -6,6 +6,12 @@
 
 ![](https://user-gold-cdn.xitu.io/2018/6/26/1643bf39645d064c?w=507&h=472&f=gif&s=20682)
 
+#####更新:
+***1.增加日期多选 :selectionMode="'dates'"，事件select返回选择日期及节点***
+2.增加语言切换 :lang="'en'"
+3.抽离css方便自定义样式  import 'ele-calendar/dist/vue-calendar.css' //引入css
+注释：需要配置了jsx依赖
+
 ### 使用方法：
 
 1.下载npm包:
@@ -91,6 +97,8 @@
 | -------------------- | ---------------------------------------------- | ---------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | data      | 显示的数据     | array     | —             | —      |
 | prop      | 对应日期字段名 | string    | —              | —      |
+| lang      | 语言切换 | string    | en             | zh-CN    |
+| selectionMode| 日历模式 | string    | dates             | day    |
 | highlight | 是否要高亮对应日期 | boolean | —             | false |
 | currentmonth | 高亮选中日期 | boolean   | —             | false |
 | disabledDate |设置禁用状态，参数为当前日期，要求返回 Boolean | Function | — | — |
@@ -102,6 +110,7 @@
 ### Calendar Events
 | 事件名 | 说明 | 参数 |
 | -------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| pick | 切换日历年、月 | data |
-| date-change | 点击日历 | 返回当前点击时间data、event、row、node |
+| date-change | 切换日历年、月 | data |
+| select | 选择日期的数组及节点 | val,selectDom|
+| pick | 点击日历 | 返回当前点击时间data、event、row、dome |
 
